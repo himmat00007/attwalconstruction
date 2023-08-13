@@ -1,0 +1,171 @@
+<html>
+<style>
+	.file-upload {
+		position: absolute;
+		display: inline-block;
+	}
+
+	.file-upload__label {
+		display: block;
+		padding: 1em 1em;
+		color: #fff;
+		background: #222;
+		border-radius: .4em;
+		transition: background .3s;
+
+		&:hover {
+			cursor: pointer;
+			background: #000;
+		}
+	}
+
+	.file-upload__input {
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		font-size: 1;
+		width: 0;
+		height: 100%;
+		opacity: 0;
+	}
+
+	/*****************************************
+ design styles
+******************************************/
+	html {
+		font-family: 'helvetica neue', 'arial', sans-serif;
+		font-size: 12px;
+		font-weight: bold;
+		padding-top: 5em;
+		-webkit-font-smoothing: antialiased;
+		text-align: center;
+		background: #EE4F47;
+	}
+</style>
+
+<body>
+
+
+</body>
+<script>
+	function myFunction() {
+		let password = prompt("Please enter password", "");
+		if (password == 'admin') {
+
+		}
+		else {
+			window.location.replace("https://attwalconstruction.vercel.app/");
+		}
+	} myFunction()
+</script>
+<script>
+	const numberOfIterations = [{
+		name: "loft.jpg",
+		link: "https://firebasestorage.googleapis.com/v0/b/atwalconstruction.appspot.com/o/loft.jpg?alt=media&token=ffe28606-bf9b-47b2-aa0c-6b3bc422e366"
+	}, {
+		name: "roof.jpg",
+		link: "https://firebasestorage.googleapis.com/v0/b/atwalconstruction.appspot.com/o/roof.jpg?alt=media&token=d21901ad-cdaa-4791-bd5b-cc6d419deead"
+	}, {
+		name: "structural.jpg",
+		link: "https://firebasestorage.googleapis.com/v0/b/atwalconstruction.appspot.com/o/structural.jpg?alt=media&token=969cd3cd-d2c0-452a-95eb-a9d7bdb8fc26"
+	}, {
+		name: "building.jpg",
+		link: "https://firebasestorage.googleapis.com/v0/b/atwalconstruction.appspot.com/o/building.jpg?alt=media&token=565807b3-c512-44e2-a1c4-811a4bad0ea1"
+	},
+	{
+		name: "1.jpg",
+		link: "https://firebasestorage.googleapis.com/v0/b/atwalconstruction.appspot.com/o/1.jpg?alt=media&token=ffe28606-bf9b-47b2-aa0c-6b3bc422e366"
+	}, {
+		name: "2.jpg",
+		link: "https://firebasestorage.googleapis.com/v0/b/atwalconstruction.appspot.com/o/2.jpg?alt=media&token=ffe28606-bf9b-47b2-aa0c-6b3bc422e366"
+
+	}, {
+		name: "3.jpg",
+		link: "https://firebasestorage.googleapis.com/v0/b/atwalconstruction.appspot.com/o/3.jpg?alt=media&token=ffe28606-bf9b-47b2-aa0c-6b3bc422e366"
+
+	}, {
+		name: "4.jpg",
+		link: "https://firebasestorage.googleapis.com/v0/b/atwalconstruction.appspot.com/o/4.jpg?alt=media&token=ffe28606-bf9b-47b2-aa0c-6b3bc422e366"
+
+	}] // Change this to the desired number of iterations
+
+	for (let i = 0; i < numberOfIterations.length; i++) {
+		let element = numberOfIterations[i]
+		document.write(`
+			<div style="display:flex;justify-content:space-around;align-items:center;margin-bottom:10px">
+				<img id=${element?.name}_ style="width: 400px;height: 250px;"
+					src=${element?.link} />
+				<div class="file-upload">
+					<label for=${element?.name} class="file-upload__label">Change Image</label>
+					<input id=${element?.name} class="file-upload__input" type="file">
+				</div>
+			</div>
+		`);
+	}
+</script>
+<script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-firestore.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-storage.js"></script>
+<script type="module">
+
+	// https://firebase.google.com/docs/web/setup#available-libraries
+
+
+	// Your web app's Firebase configuration
+
+	const firebaseConfig = {
+		apiKey: "AIzaSyBs6wmQ3HrCgDvP6y488omqI0NXc-60OeU",
+		authDomain: "atwalconstruction.firebaseapp.com",
+		projectId: "atwalconstruction",
+		storageBucket: "atwalconstruction.appspot.com",
+		messagingSenderId: "920484823562",
+		appId: "1:920484823562:web:d42b0db6a9eb40fd6d55f3",
+		measurementId: "G-7QC4NLYH10"
+	};
+	const app = firebase.initializeApp(firebaseConfig);
+	const db = app.firestore()
+
+
+	// Initialize Firebase
+
+
+
+
+
+	let listner = numberOfIterations
+	for (let index = 0; index < listner.length; index++) {
+		const element = listner[index];
+		const fileSelector = document.getElementById(element.name);
+		fileSelector.addEventListener('change', (event) => {
+			const fileList = event.target.files;
+			uploadImage(fileList[0], element.name)
+		});
+	}
+
+	function uploadImage(file, file_name) {
+
+		var storage = firebase.storage().ref();
+		var ref = storage
+		const name = file_name;
+		const metadata = {
+			contentType: file.type
+		};
+		console.log('started')
+		const task = ref.child(name).put(file, metadata); task
+			.then(snapshot => snapshot.ref.getDownloadURL())
+			.then(url => {
+				console.log(url);
+				let tag = file_name + "_"
+				console.log(tag)
+				document.getElementById(tag).src = url;
+				// alert('image uploaded successfully');
+				// document.querySelector("#image").src = url;
+			})
+			.catch(console.error);
+	}
+</script>
+
+</html>
