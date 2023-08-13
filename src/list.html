@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List</title>
+</head>
+<style>
+    body {
+        font-family: "Open Sans", sans-serif;
+        line-height: 1.25;
+    }
+
+    table {
+        border: 1px solid #ccc;
+        border-collapse: collapse;
+        table-layout: fixed;
+        width: 100%;
+    }
+
+    table caption {
+        font-size: 1.5em;
+        margin: .5em 0 .75em;
+    }
+
+    table tr {
+        border: 1px solid #ddd;
+        padding: .35em;
+    }
+
+    table tr:nth-child(even) {
+        background: #f8f8f8;
+    }
+
+    table th,
+    table td {
+        padding: .625em;
+        text-align: left;
+    }
+
+    table th {
+        background: #999;
+        color: #fff;
+        font-size: .85em;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+    }
+
+    table td {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 1em;
+    }
+</style>
+
+<body>
+    <table>
+        <caption>Record List</caption>
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">phone</th>
+                <th scope="col">description</th>
+                <th scope="col">delete</th>
+
+            </tr>
+        </thead>
+        <tbody id="recordTableBody">
+
+
+        </tbody>
+    </table>
+</body>
+<script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-firestore.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-storage.js"></script>
+<script>
+
+    function myFunction() {
+        let password = prompt("Please enter password", "");
+        if (password == 'admin') {
+
+        }
+        else {
+            window.location.replace("https://attwalconstruction.vercel.app/");
+        }
+    } myFunction()
+</script>
+<script>
+
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+
+    // Your web app's Firebase configuration
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBs6wmQ3HrCgDvP6y488omqI0NXc-60OeU",
+        authDomain: "atwalconstruction.firebaseapp.com",
+        projectId: "atwalconstruction",
+        storageBucket: "atwalconstruction.appspot.com",
+        messagingSenderId: "920484823562",
+        appId: "1:920484823562:web:d42b0db6a9eb40fd6d55f3",
+        measurementId: "G-7QC4NLYH10"
+    };
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = app.firestore()
+
+    async function getData() {
+        console.log('called')
+        let data = await db.collection('forms').get()
+        let records = data?.docs
+        console.log(records)
+        const tbody = document.getElementById('recordTableBody');
+
+        while (tbody.firstChild) {
+            tbody.removeChild(tbody.firstChild);
+        }
+        records.forEach(records => {
+            const row = document.createElement('tr')
+            let record = records?.data()
+            row.innerHTML = `
+                <td scope="row">${record.name}</td>
+                <td>${record.phone}</td>
+                <td>${record.description}</td>
+
+                <td>
+                    <div onclick="deleteData('${records.id}')" style="height: 55px;display: flex;align-items: center; rgb(215, 146, 16);">
+                        <p style="color: red;">delete</p>
+                    </div>
+                </td>
+                `;
+            tbody.appendChild(row);
+        });
+
+    }
+    // Initialize Firebase
+    getData()
+    async function deleteData(id) {
+        console.log('deletdd')
+        let data = await db.collection('forms').doc(id).delete()
+        getData()
+    }
+
+
+</script>
+
+</html>

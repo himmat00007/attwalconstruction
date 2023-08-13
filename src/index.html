@@ -269,16 +269,16 @@
                             <!-- <img class="image_" src="./images/contactanimation.gif" style="width:30%;margin: auto;"> -->
                         </div>
                         <div class="column">
-                            <form>
+                            <form onsubmit="return false">
                                 <label class="label" for="fname">Name</label>
-                                <input type="text" id="fname" name="name" placeholder="Your name..">
+                                <input type="text" id="name_" name="name" placeholder="Your name..">
                                 <label class="label" for="phone">Phone Number</label>
-                                <input type="text" id="lname" name="lname" placeholder="Your phone number..">
+                                <input type="text" id="phone_" name="lname" placeholder="Your phone number..">
 
                                 <label class="label" for="subject">Subject</label>
-                                <textarea id="subject" name="subject" placeholder="Write something.."
+                                <textarea id="description" name="subject" placeholder="Write something.."
                                     style="height:170px"></textarea>
-                                <input onclick="" type="submit" value="Submit">
+                                <input onclick="addData()" value="Click" type="submit" value="Submit">
                             </form>
                         </div>
                     </div>
@@ -408,16 +408,7 @@
     <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-firestore.js"></script>
 
-    <script type="module">
-
-        // Import the functions you need from the SDKs you need
-
-        // TODO: Add SDKs for Firebase products that you want to use
-
-        // https://firebase.google.com/docs/web/setup#available-libraries
-
-
-        // Your web app's Firebase configuration
+    <script>
 
         const firebaseConfig = {
             apiKey: "AIzaSyBs6wmQ3HrCgDvP6y488omqI0NXc-60OeU",
@@ -433,16 +424,32 @@
 
         // Initialize Firebase
 
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = app.firestore()
-        const getData = async () => {
-            let data = await db.collection('hi').get()
-            console.log(data?.docs[0]?.data())
+        var app = firebase.initializeApp(firebaseConfig);
+        var db = app.firestore()
+
+        async function addData() {
+            let name = document.getElementById("name_").value
+            let phone = document.getElementById("phone_").value
+            let description = document.getElementById("description").value
+            console.log(name, phone, description)
+            if (name.length < 1 || phone.length < 1 || description.length < 1) {
+                alert('Please fill all fields')
+                return
+            }
+            let data = await db.collection('forms').add({
+                name: name,
+                phone: phone,
+                description: description
+            })
+            if (data) {
+                document.getElementById("name_").value = ""
+                document.getElementById("description").value = ""
+                document.getElementById("phone_").value = ""
+                alert('form submitted')
+            }
+            console.log(data)
         }
-        getData()
-
     </script>
-
     <div id="style-changer" data-src="inc/style-changer.html"></div>
 </body>
 
